@@ -49,7 +49,6 @@ const App: React.FC = () => {
     setOpen(true)
   }
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -88,19 +87,21 @@ const App: React.FC = () => {
   }
   return (
      <>
-          <Flex gap="middle" vertical>
-               <Flex align='center' justify='space-between'>
-                    <Flex align="center" gap="middle">
-                    <Button type="primary" onClick={start} disabled={!hasSelected} loading={loading}>
-                    Reload
-                    </Button>
-                    {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
-                    </Flex>
-                    <Button type="primary" onClick={() => {openModal('add')}}>Add account</Button>
-               </Flex>
-               <Table<DataType> rowSelection={rowSelection} columns={columns} dataSource={dataSource} />
-          </Flex>
-          <ModalComponent {...props}></ModalComponent>
+      <Flex gap="middle" vertical style={{ maxHeight: "100%" }}>
+            <Flex align='center' justify='space-between'>
+                <Flex align="center" gap="middle">
+                <Button type="primary" onClick={start} disabled={!hasSelected} loading={loading}>
+                Reload
+                </Button>
+                {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
+                </Flex>
+                <Button type="primary" onClick={() => {openModal('add')}}>Add account</Button>
+            </Flex>
+            <div style={{ maxHeight: "100%", width: "100%"}}>
+              <Table<DataType> rowSelection={rowSelection} columns={columns} dataSource={dataSource} scroll={{ x: '100%' }} />
+            </div>
+      </Flex>
+      <ModalComponent {...props}></ModalComponent>
      </>
   );
 };

@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import {
   DesktopOutlined,
-  FileOutlined,
   PieChartOutlined,
-  TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { Layout, Menu, theme } from 'antd';
+import AccountManage from "./layouts/AccountManage"
+import KeywordManage from "./layouts/KeywordManage"
+import PostManage from "./layouts/PostManage"
 
-import Table from "./components/Table"
-
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -30,40 +29,40 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem('Option 1', '1', <PieChartOutlined />),
-  getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
-  ]),
-  getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  getItem('Files', '9', <FileOutlined />),
+  getItem('Manage accounts', '1', <PieChartOutlined />),
+  getItem('Manage keywords', '2', <DesktopOutlined />),
+  getItem('Manage posts', '3', <UserOutlined />)
 ];
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [layout, setLayout] = useState(null);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-
+  const onClick: MenuProps['onClick'] = ({ key }) => {
+    setLayout(key)
+  };
+  const renderLayout = () => {
+    switch (layout) {
+      case "2":
+        return <KeywordManage />;
+      case "3":
+        return <PostManage />
+      default:
+        return <AccountManage />;
+    }
+  };
   return (
-    <Layout style={{ minHeight: '100vh', width: '100%' }}>
+    <Layout style={{ height: '100vh', width: '100%' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+        <Menu onClick={onClick} theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
       </Sider>
-      <Layout>
+      <Layout style={{ overflowY: "scroll"}}>
         <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: '0 16px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Account</Breadcrumb.Item>
-          </Breadcrumb>
-          <Table></Table>
-        </Content>
-        <Footer style={{ textAlign: 'center' }}>
-          
+        { renderLayout() }
+        <Footer style={{ textAlign: 'center' }}>  
         </Footer>
       </Layout>
     </Layout>

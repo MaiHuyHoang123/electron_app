@@ -5,13 +5,16 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { DataSource } from "typeorm"
 import User from "../entity/User"
+import {getNumPosts, previewPost, getPosts, getListPost, deletePost, uploadPost} from "../service/PostService"
+import Post from "../entity/Post"
+
 
 const AppDataSource = new DataSource({
     type: "sqlite",
     database: "myDB.sqlite",
     synchronize: true,
     logging: true,
-    entities: [User]
+    entities: [User, Post]
 })
 
 let databaseConnection
@@ -147,7 +150,6 @@ ipcMain.handle("updateUser", async (_, args) => {
     user.email = args.email
     user.password = args.password
     await user.save()
-    console.log(args);
     return true
   }catch(e){
     console.log("error: " + e);
@@ -165,3 +167,10 @@ ipcMain.handle("deleteUser", async (_, id) => {
     return false
   }
 })
+
+ipcMain.handle("crawlPosts", getNumPosts)
+ipcMain.handle("crawlPost", getPosts)
+ipcMain.handle("previewPost", previewPost)
+ipcMain.handle("getListPost", getListPost)
+ipcMain.handle("deletePost", deletePost)
+ipcMain.handle("uploadPost", uploadPost)
